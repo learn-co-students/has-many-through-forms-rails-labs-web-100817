@@ -1,7 +1,16 @@
 class CommentsController < ApplicationController
 
   def create
-    comment = Comment.create(comment_params)
+    if comment_params[:user_attributes][:username] == ""
+      user_id = comment_params[:user_id]
+    else
+      user_id = User.find_or_create_by(username: comment_params[:user_attributes][:username]).id
+    end
+    comment = Comment.create(
+      content: comment_params[:content],
+      post_id: comment_params[:post_id],
+      user_id: user_id
+    )
     redirect_to comment.post
   end
 
