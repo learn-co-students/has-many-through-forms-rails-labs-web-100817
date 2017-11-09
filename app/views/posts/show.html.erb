@@ -1,1 +1,34 @@
+<h1><%= @post.title %></h1>
+<h4><%= @post.content %></h4>
+<h2>Categories:</h2>
+<ul>
+  <% @post.categories.each do |cat| %>
+    <li><%= link_to cat.name, category_path(cat) %></li>
+  <% end %>
+</ul>
 
+<h2>comments:</h2>
+<ul>
+  <% @post.users.uniq.each do |us| %>
+    <%= link_to us.username, user_path(us) %>
+      <% us.comments.where(post_id: @post.id).each do |c|%>
+        <li><p><%= "#{us.username} says: #{c.content}" %></p></li>
+      <% end %>
+  <% end %>
+</ul>
+
+
+<%= form_for @post.comments.build do |f| %>
+  <%= f.hidden_field :post_id,  value: @post.id %>
+  Comment: <%= f.text_field :content, id: "comment_content" %>
+
+  <%= fields_for :comment do |us| %>
+  Choose: <%= us.collection_select(
+        :user_id,
+        User.all,
+        :id,
+        :username, { include_blank: "Please select one" }) %>
+  User: <%= us.text_field :username, {name: "comment[comment_user]", id: "comment_user_attributes_username"}%>
+  <% end %>
+  <%= f.submit "Create Comment" %>
+<% end %>

@@ -1,1 +1,14 @@
-
+<h1>New Post</h1>
+<%= form_for @post do |f| %>
+  Title: <%= f.text_field :title %>
+  Content: <%= f.text_area :content %>
+  Choose: <%= f.collection_check_boxes(
+        :category_ids,
+        Category.all,
+        :id,
+        :name) %>
+  Categories: <%= f.fields_for :categories_attributes, @post.categories.build do |catf| %>
+    New: <%= catf.text_field :name, {id: "post_categories_attributes_0_name"} %>
+  <% end %>
+<%= f.submit "Create Post" %>
+<% end %>
