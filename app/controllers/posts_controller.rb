@@ -12,13 +12,18 @@ class PostsController < ApplicationController
   end
 
   def create
-    post = Post.create(post_params)
-    redirect_to post
+    post = Post.new(post_params)
+    if post.save
+      redirect_to post
+    else
+      render :new
+    end
   end
 
   private
 
   def post_params
+    params[:post][:category_ids].delete("")
     params.require(:post).permit(:title, :content, category_ids:[], categories_attributes: [:name])
   end
 end
